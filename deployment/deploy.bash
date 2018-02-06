@@ -104,13 +104,15 @@ sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/${CURUSER}\/pool_db\/\",/" ~/nod
 cd ~
 git clone https://github.com/sysrenan/poolui.git
 # Change config files
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config.json
 sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/config.json
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
 sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/debug_scripts/socket_io.html
 sed -i "s@example.com@${domainName}@g" ~/poolui/global.js
 sed -i "s@example.com@${domainName}@g" ~/poolui/global.default.js
-sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
-sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
-cd poolui
+
+cd ~/poolui
 npm install
 ./node_modules/bower/bin/bower update
 ./node_modules/gulp/bin/gulp.js build
@@ -161,8 +163,8 @@ sudo env PATH=$PATH:`pwd`/.nvm/versions/node/v8.9.3/bin `pwd`/.nvm/versions/node
 cd ~/nodejs-pool
 sudo chown -R $CURUSER. ~/.pm2
 echo "installing pm2-logrotate... might take few minutes, hang in there!"
-pm2 install pm2-logrotate 
-sleep 5s
+pm2 install pm2-logrotate &
+sleep 20s
 
 # Configuring Database
 mysql -u root --password=${ROOT_SQL_PASS} < deployment/base.sql
@@ -185,6 +187,7 @@ cd ~/nodejs-pool/sql_sync/
 env PATH=$PATH:`pwd`/.nvm/versions/node/v8.9.3/bin node sql_sync.js
 source ~/.bashrc
 source ~/.profile
+source /etc/profile
 
 # Start API Module
 cd ~/nodejs-pool
@@ -206,6 +209,10 @@ echo ":: REPORT ::"
 echo "
 Domain: ${domainName}
 Email: ${adminEmail}
+
+Admin Panel: http://${domainName}/admin.html
+User: Administrator
+Pass: ${adminPass}
 
 MySQL User: root
 MySQL DB: <all>
