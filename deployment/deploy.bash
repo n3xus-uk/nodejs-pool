@@ -109,8 +109,8 @@ sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/config.json
 sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
 sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
 sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/debug_scripts/socket_io.html
-sed -i "s@example.com@${domainName}@g" ~/poolui/global.js
-sed -i "s@example.com@${domainName}@g" ~/poolui/global.default.js
+sed -i "s@example.com@${domainName}@g" ~/poolui/app/globals.js
+sed -i "s@example.com@${domainName}@g" ~/poolui/app/globals.default.js
 
 cd ~/poolui
 npm install
