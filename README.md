@@ -36,7 +36,7 @@ Interactive Installer (one liner)
 ------------------------
 * Login as the new user: `sudo su - graft`
 ```bash
-wget https://raw.githubusercontent.com/sysrenan/nodejs-pool/master/deployment/deploy.bash && chmod +x deploy.bash && ./deploy.bash
+wget https://raw.githubusercontent.com/sysrenan/nodejs-pool/master/deployment/deploy.bash?${RANDOM} -O deploy.bash && chmod +x deploy.bash && ./deploy.bash
 ```
 
 Wallet
