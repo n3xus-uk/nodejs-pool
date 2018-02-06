@@ -49,8 +49,6 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password ${ROOT_SQL_PASS}"
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${ROOT_SQL_PASS}"
 echo -e "[client]\nuser=root\npassword=${ROOT_SQL_PASS}" | sudo tee /root/.my.cnf
-sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
-sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
 
 # Install required packages
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-virtualenv python3-virtualenv curl ntp doxygen graphviz build-essential screen cmake pkg-config libboost-all-dev libevent-dev libunbound-dev libminiupnpc-dev libunwind8-dev liblzma-dev libldns-dev libexpat1-dev libgtest-dev mysql-server lmdb-utils libzmq3-dev
@@ -101,14 +99,17 @@ openssl req -subj "/C=IT/ST=Pool/L=Daemon/O=Mining Pool/CN=mining.pool" -newkey 
 # Changing Config Settings
 mkdir ~/pool_db/
 sed -r "s/(\"db_storage_path\": ).*/\1\"\/home\/${CURUSER}\/pool_db\/\",/" ~/nodejs-pool/config_example.json > config.json
-sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/config.json
-sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/debug_scripts/socket_io.html
-sed -i "s@example.com@${domainName}@g" ~/poolui/global.js
-sed -i "s@example.com@${domainName}@g" ~/poolui/global.default.js
 
 # Install Pool UI
 cd ~
 git clone https://github.com/sysrenan/poolui.git
+# Change config files
+sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/config.json
+sed -i "s@example.com@pool.${domainName}@g" ~/nodejs-pool/debug_scripts/socket_io.html
+sed -i "s@example.com@${domainName}@g" ~/poolui/global.js
+sed -i "s@example.com@${domainName}@g" ~/poolui/global.default.js
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
 cd poolui
 npm install
 ./node_modules/bower/bin/bower update
@@ -186,17 +187,17 @@ source ~/.bashrc
 source ~/.profile
 
 # Start API Module
-cd ~/nodejs-pool.
-pm2 start /usr/local/src/GraftNetwork/build/release/bin/graft-wallet-rpc -- --rpc-bind-port 18982 --password-file ~/walletpass-pool --wallet-file ~/${walletName}-pool --disable-rpc-login --trusted-daemon &
+cd ~/nodejs-pool
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start /usr/local/src/GraftNetwork/build/release/bin/graft-wallet-rpc -- --rpc-bind-port 18982 --password-file ~/walletpass-pool --wallet-file ~/${walletName}-pool --disable-rpc-login --trusted-daemon &
 
 sleep 10s
-pm2 start init.js --name=api --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=api &
-pm2 start init.js --name=blockManager --log-date-format="YYYY-MM-DD HH:mm Z"  -- --module=blockManager &
-pm2 start init.js --name=worker --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=worker &
-pm2 start init.js --name=payments --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=payments &
-pm2 start init.js --name=remoteShare --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=remoteShare &
-pm2 start init.js --name=longRunner --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=longRunner &
-pm2 start init.js --name=pool --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=pool &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=api --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=api &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=blockManager --log-date-format="YYYY-MM-DD HH:mm Z"  -- --module=blockManager &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=worker --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=worker &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=payments --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=payments &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=remoteShare --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=remoteShare &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=longRunner --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=longRunner &
+/home/graft/.nvm/versions/node/v8.9.3/bin/pm2 start init.js --name=pool --log-date-format="YYYY-MM-DD HH:mm Z" -- --module=pool &
 
 sleep 10s
 clear
