@@ -37,6 +37,7 @@ fi
 # DEFINE
 CURUSER=$(whoami)
 ROOT_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+POOL_SQL_PASS=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 TIMEZONE="Etc/UTC"
 
 # Set Timezone and Update
@@ -48,6 +49,8 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get -y upgrade
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password password ${ROOT_SQL_PASS}"
 sudo debconf-set-selections <<< "mysql-server mysql-server/root_password_again password ${ROOT_SQL_PASS}"
 echo -e "[client]\nuser=root\npassword=${ROOT_SQL_PASS}" | sudo tee /root/.my.cnf
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/deployment/base.sql
+sed -i "s@CHANGEPASS@${POOL_SQL_PASS}@g" ~/nodejs-pool/config_example.json
 
 # Install required packages
 sudo DEBIAN_FRONTEND=noninteractive apt-get -y install git python-virtualenv python3-virtualenv curl ntp doxygen graphviz build-essential screen cmake pkg-config libboost-all-dev libevent-dev libunbound-dev libminiupnpc-dev libunwind8-dev liblzma-dev libldns-dev libexpat1-dev libgtest-dev mysql-server lmdb-utils libzmq3-dev
@@ -201,8 +204,12 @@ Domain: ${domainName}
 Email: ${adminEmail}
 
 MySQL User: root
-MySQL DB: pool
+MySQL DB: <all>
 MySQL Pass: ${ROOT_SQL_PASS}
+
+MySQL User: pool
+MySQL DB: pool
+MySQL Pass: ${POOL_SQL_PASS}
 
 Wallet Location: ${PWD}/${walletName}
 Wallet Pass: ${walletPass}
