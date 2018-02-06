@@ -177,6 +177,7 @@ mysql -u root --password=${ROOT_SQL_PASS} pool -e "UPDATE pool.users SET email =
 
 # Install LMDB Tools
 bash ~/nodejs-pool/deployment/install_lmdb_tools.sh
+sleep 10s
 
 # Defining ENV Vars
 cd ~/nodejs-pool/sql_sync/
